@@ -312,6 +312,8 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 				},
 			},
 		}
+		logger(d.ConnInfo()).Debug(fmt.Sprintf("****** authenticator.Provider = %+v", authenticator.Provider))
+
 	} else if d.Get("type").(string) == "DUO" {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
