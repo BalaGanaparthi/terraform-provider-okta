@@ -308,7 +308,7 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 				InstanceId:   d.Get("provider_instance_id").(string),
 				SharedSecret: d.Get("provider_shared_secret").(string),
 				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNamePlate{
-					Template: "",
+					Template: d.Get("provider_user_name_template").(string),
 				},
 			},
 		}
