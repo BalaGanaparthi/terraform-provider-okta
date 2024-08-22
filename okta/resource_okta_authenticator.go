@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/okta/terraform-provider-okta/sdk"
@@ -299,7 +300,11 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 		Key:  d.Get("key").(string),
 		Name: d.Get("name").(string),
 	}
-	fmt.Printf("****** authenticator.type = %s\n", d.Get("type").(string))
+	_logger := hclog.New(&hclog.LoggerOptions{
+		Level:      hclog.Trace,
+		TimeFormat: "2006/01/02 03:04:05",
+	})
+	_logger.Trace(fmt.Sprintf("****** authenticator.type = %s\n", d.Get("type").(string)))
 	if d.Get("type").(string) == "security_key" {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
@@ -313,7 +318,8 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 				},
 			},
 		}
-		fmt.Printf("****** authenticator.Provider = %+v\n", authenticator.Provider)
+		_logger.Trace("****** authenticator.Provider:provider_user_name_template = %+v\n", d.Get("provider_user_name_template").(string))
+		_logger.Trace("****** authenticator.Provider = %+v\n", authenticator.Provider)
 	} else if d.Get("type").(string) == "DUO" {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
