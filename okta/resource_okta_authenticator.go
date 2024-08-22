@@ -185,7 +185,7 @@ func resourceAuthenticatorCreate(ctx context.Context, d *schema.ResourceData, m 
 	authenticator, _ := findAuthenticator(ctx, m, d.Get("name").(string), d.Get("key").(string))
 	if authenticator == nil {
 		// otherwise hard create
-		authenticator, err = buildAuthenticator(d)
+		authenticator, err = buildAuthenticator(d, m)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -254,7 +254,7 @@ func resourceAuthenticatorUpdate(ctx context.Context, d *schema.ResourceData, m 
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	authenticator, err := buildAuthenticator(d)
+	authenticator, err := buildAuthenticator(d, m)
 	if err != nil {
 		return diag.Errorf("failed to update authenticator: %v", err)
 	}
@@ -292,7 +292,7 @@ func resourceAuthenticatorDelete(ctx context.Context, d *schema.ResourceData, m 
 	return nil
 }
 
-func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
+func buildAuthenticator(d *schema.ResourceData, m interface{}) (*sdk.Authenticator, error) {
 	authenticator := sdk.Authenticator{
 		Type: d.Get("type").(string),
 		Id:   d.Id(),
@@ -312,7 +312,7 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 				},
 			},
 		}
-		logger(d.ConnInfo()).Debug(fmt.Sprintf("****** authenticator.Provider = %+v", authenticator.Provider))
+		logger(m).Debug(fmt.Sprintf("****** authenticator.Provider = %+v", authenticator.Provider))
 
 	} else if d.Get("type").(string) == "DUO" {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
