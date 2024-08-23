@@ -299,8 +299,22 @@ func buildAuthenticator(d *schema.ResourceData) (*sdk.Authenticator, error) {
 		Key:  d.Get("key").(string),
 		Name: d.Get("name").(string),
 	}
-	fmt.Printf("303\n")
-	if d.Get("type").(string) == "security_key" {
+	fmt.Printf("Line #302\n")
+	if d.Get("key").(string) == "rsa_token" {
+		fmt.Printf("Line #304 : Key is rsa_token\n")
+		authenticator.Provider = &sdk.AuthenticatorProvider{
+			Type: d.Get("provider_type").(string),
+			Configuration: &sdk.AuthenticatorProviderConfiguration{
+				HostName:     d.Get("provider_hostname").(string),
+				AuthPortPtr:  int64Ptr(d.Get("provider_auth_port").(int)),
+				InstanceId:   d.Get("provider_instance_id").(string),
+				SharedSecret: d.Get("provider_shared_secret").(string),
+				UserNameTemplate: &sdk.AuthenticatorProviderConfigurationUserNamePlate{
+					Template: d.Get("provider_user_name_template").(string),
+				},
+			},
+		}
+	} else if d.Get("type").(string) == "security_key" {
 		authenticator.Provider = &sdk.AuthenticatorProvider{
 			Type: d.Get("provider_type").(string),
 			Configuration: &sdk.AuthenticatorProviderConfiguration{
